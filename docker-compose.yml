@@ -1,6 +1,34 @@
-﻿services:
+services:
   lemonchefapi:
-    image: lemonchefapi
+    image: ${DOCKER_REGISTRY-}lemonchefapi
     build:
       context: .
-      dockerfile: LemonChefApi/Dockerfile
+      dockerfile: src/Services/RecipeService/LemonChefApi/Dockerfile
+    depends_on:
+      - postgres_db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__DefaultConnection=User ID=postgres;Password=mysecretpassword;Host=postgres_db;Port=5432;Database=LemonChef;
+    ports:
+      - "8080"
+      - "8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  postgres_db:
+    container_name: LiVLemonChef
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_DB=LemonChef
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
