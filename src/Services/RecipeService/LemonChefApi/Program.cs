@@ -6,6 +6,7 @@ using Infrastructure.Dal.EntityFramework;
 using Infrastructure.Dal.Repositories;
 using LemonChefApi.Identity;
 using LemonChefApi.Settings;
+using LemonChefApi.TestsMetrics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -82,6 +83,8 @@ public class Program
         {
             options.Port = 9090;
         });
+        builder.Services.AddScoped<MetricsBase>();
+
 
         builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection(nameof(EmailSettings)));
         
@@ -116,6 +119,8 @@ public class Program
 
         //Добавляем middleware Prometheus для сбора метрик
         app.UseMetricServer();
+        //add middleware
+        app.UseMiddleware<ExceptionMiddleware>();
 
         app.UseHttpsRedirection();
 

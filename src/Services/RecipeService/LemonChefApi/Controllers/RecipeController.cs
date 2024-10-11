@@ -1,8 +1,10 @@
-﻿using System.Security.Claims;
-using Application.Dto_s.Recipe.Requests;
+﻿using Application.Dto_s.Recipe.Requests;
+using Application.Dto_s.Recipe.Responses;
 using Application.Interfaces.Services;
+using LemonChefApi.TestsMetrics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LemonChefApi.Controllers;
 
@@ -10,6 +12,13 @@ namespace LemonChefApi.Controllers;
 [Route("/api/[controller]")]
 public class RecipesController : ControllerBase
 {
+    private readonly MetricsBase _metricsBase;
+
+    public RecipesController(MetricsBase metricsBase)
+    {
+        _metricsBase = metricsBase;
+    }
+
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> CreateAsync([FromBody] RecipeCreateRequest request, 
