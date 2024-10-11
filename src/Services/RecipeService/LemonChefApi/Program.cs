@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Prometheus;
 
 namespace LemonChefApi;
 
@@ -39,7 +40,7 @@ public class Program
             options.SignIn.RequireConfirmedAccount = true;
             options.User.RequireUniqueEmail = true;
         });
-        
+
         builder.Services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc("v1", new OpenApiInfo()
@@ -75,7 +76,13 @@ public class Program
                 }
             });
         });
-        
+
+        // регистрации метрик
+        builder.Services.AddMetricServer(options =>
+        {
+            options.Port = 9090;
+        });
+
         builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection(nameof(EmailSettings)));
         
         builder.Services.AddTransient<IIngredientService,IngredientService>();
@@ -106,6 +113,9 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        //Добавляем middleware Prometheus для сбора метрик
+        app.UseMetricServer();
 
         app.UseHttpsRedirection();
 

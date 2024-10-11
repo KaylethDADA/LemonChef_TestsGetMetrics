@@ -12,8 +12,9 @@ services:
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__DefaultConnection=User ID=postgres;Password=mysecretpassword;Host=postgres_db;Port=5432;Database=LemonChef;
     ports:
-      - "8080"
-      - "8081"
+    - "8080"     # Порт для основного API
+    - "8081"     # Порт для HTTPS
+    - "9090"     # Порт для метрик
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
